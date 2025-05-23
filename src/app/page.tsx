@@ -15,7 +15,8 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // API URL
-  const API_URL = "http://localhost:3001/api";
+  // const API_URL = "http://localhost:3001/api";
+  const API_URL = "https://jogou-baixou-backend.onrender.com/api";
 
   // Upload file to the backend
   const uploadFile = useCallback(async (file: File) => {
