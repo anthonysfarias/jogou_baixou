@@ -16,9 +16,9 @@ interface FileData {
   valid: boolean;
 }
 
-export default function DownloadPage({ params }: { params: { id: string } | Promise<{ id: string }> }) {
-  // Unwrap params using React.use()
-  const unwrappedParams = params instanceof Promise ? use(params) : params;
+export default function DownloadPage({ params }: { params: Promise<{ id: string }> }) {
+  // Unwrap params using React.use() since params is a Promise
+  const unwrappedParams = use(params);
   const [fileData, setFileData] = useState<FileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,8 +73,8 @@ export default function DownloadPage({ params }: { params: { id: string } | Prom
           };
           
           setFileData(fileData);
-        } catch (fetchError: any) {
-          if (fetchError && fetchError.name === 'AbortError') {
+        } catch (fetchError: unknown) {
+          if (fetchError instanceof Error && fetchError.name === 'AbortError') {
             throw new Error("Tempo de conexão esgotado. Verifique sua conexão com a internet.");
           }
           throw fetchError;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -18,56 +17,8 @@ export default function Home() {
   // API URL
   const API_URL = "http://localhost:3001/api";
 
-  // Handle drag events
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
-
-  // Handle file drop
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const droppedFile = e.dataTransfer.files[0];
-      handleFileSelected(droppedFile);
-    }
-  }, []);
-
-  // Handle file selection via button
-  const handleFileButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      handleFileSelected(selectedFile);
-    }
-  };
-
-  // Common file handling logic
-  const handleFileSelected = (selectedFile: File) => {
-    setFile(selectedFile);
-    uploadFile(selectedFile);
-  };
-
   // Upload file to the backend
-  const uploadFile = async (file: File) => {
+  const uploadFile = useCallback(async (file: File) => {
     setIsUploading(true);
     setUploadError(null);
     
@@ -101,6 +52,54 @@ export default function Home() {
       console.error('Upload error:', error);
       setIsUploading(false);
       setUploadError(error instanceof Error ? error.message : 'Erro desconhecido ao enviar o arquivo');
+    }
+  }, [API_URL]);
+
+  // Common file handling logic
+  const handleFileSelected = useCallback((selectedFile: File) => {
+    setFile(selectedFile);
+    uploadFile(selectedFile);
+  }, [uploadFile, setFile]);
+
+  // Handle drag events
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  // Handle file drop
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const droppedFile = e.dataTransfer.files[0];
+      handleFileSelected(droppedFile);
+    }
+  }, [handleFileSelected]);
+
+  // Handle file selection via button
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      handleFileSelected(selectedFile);
     }
   };
 
@@ -143,6 +142,13 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-2xl font-semibold mb-2">Compartilhe seus arquivos</h2>
               <p className="text-gray-600 mb-8">Arraste e solte seu arquivo ou clique para selecionar</p>
+              
+              {/* Error message */}
+              {uploadError && (
+                <div className="bg-error/10 text-error p-4 rounded-lg mb-6">
+                  <p className="font-medium">{uploadError}</p>
+                </div>
+              )}
               
               {/* Upload Area */}
               <div 
