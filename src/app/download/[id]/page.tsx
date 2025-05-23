@@ -5,7 +5,8 @@ import { use } from "react";
 import Link from "next/link";
 
 // API URL
-const API_URL = "http://localhost:3001/api";
+ // const API_URL = "http://localhost:3001/api";
+ const API_URL = "https://jogou-baixou-backend.onrender.com/api";
 
 // Simulated file data type
 interface FileData {
