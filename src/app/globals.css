@@ -12,12 +12,7 @@
   --error: #ef4444;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Modo claro fixo, independente do tema do sistema */
 
 body {
   color: var(--text-color);
